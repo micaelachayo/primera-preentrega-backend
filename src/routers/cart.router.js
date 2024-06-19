@@ -35,11 +35,16 @@ router.get("/carts/:cid", async (req, res) => {
   router.post ("/carts/:cid/product/:pid", async (req, res)=>{
  try {
     const {cid, pid}= req.params;
+    //checkea que el prodcuto exista
     const product= await productManager.getProductById (pid);
    if(!product){
    return res.status(404).json({ status: "error", msg: "Producto no encontrado" })
    };
 
+const cartId= await cartManager.getCartById (cid);
+if (!cartId){
+    return res.status(404).json({ status: "error", msg: "el Id del carrito no se ha encontrado" })
+};
     const cart =await cartManager.addProductToCart(cid,pid);
    if(!cart){
     return res.status(404).json({ status: "error", msg: "Carrito no encontrado" });
