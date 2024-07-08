@@ -1,0 +1,31 @@
+{{!-- ACA VAMOS A TRABAJAR CON WEBSOCKET PARA QUE AL AGREGAR UN PROD O ELIMINAR UNO, 
+INMEDIATAMENTE SE LES CAMBIE A TODOS LOS SERVIDORES --}}
+
+{{!-- Formulario para agregar un producto a la pagina --}}
+<div>
+    <div>
+        <h3>Agregar Producto</h3>
+    </div>
+    <form action="POST" id="addForm">
+    <input type="text" name="title" id="title" placeholder="Nombre del producto ">
+    <input type="text" name="price" id="price" placeholder="Precio del producto">
+    <input type="text" name="description" id="description" placeholder="Descripcion del producto">
+    <button type="submit" id="submi">Agregar Producto</button>
+</form>
+</div>
+
+<div>
+    <div>
+        <h3>Eliminar producto</h3>
+    </div>
+    <form action="delete" id="deleteForm">
+        <input type="text" name="delete" id="deleteId" placeholder="Ingrese el id del producto">
+    <button type="submit">Eliminar producto</button>
+    </form>
+</div>
+{{!-- Renderizamos todos los productos --}}
+<div id="productList"></div>
+
+{{!-- PARA TRABAJAR CON WEBSOCKET --}}
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/index.js"></script>

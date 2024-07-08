@@ -1,0 +1,14 @@
+{{! Mostramos todos los productos que recibimos en una tarjeta en el front}}
+<div class="d-flex mt-5">
+  {{#each products}}
+    <div class="card m-1 p-5">
+      <div class="card-body">
+        <h5 class="card-title">{{this.title}}</h5>
+        <p class="card-text">{{this.description}}</p>
+        <p class="card-text">{{this.price}}</p>
+        <a href="/productos/{{this.id}}" class="btn btn-primary">Ver más</a>
+      </div>
+    </div>
+  {{/each}}
+
+</div>
