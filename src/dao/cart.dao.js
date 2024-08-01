@@ -44,6 +44,7 @@ const UpdateQuantity = async (cid, pid, quantity) => {
     { $set: { "products.$.quantity": quantity } }, // me setea la quantity que estamos pasando
     {new: true}
   );
+  return cart;
 };
 
 //Eliminar el producto del carrito

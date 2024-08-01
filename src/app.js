@@ -8,8 +8,6 @@ import { connectMongoDB } from "./config/mongodb.config.js";
 import envs from "./config/envs.config.js";
 
 
-const PORT = 8080;
-
 const app = express();
 connectMongoDB();
 
