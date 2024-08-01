@@ -1,55 +1,54 @@
 import { Router } from "express";
-import productManager from "../productManager.js";
+import productsDao from "../dao/products.dao.js";
 import { checkProductData } from "../middleware/checkProductData.middleware.js";
 
 
-const router = Router();
-//me muestra todos los productos del array
-router.get("/products", async (req, res) => {
-  try {
-    const { limit } = req.query;
-    const products = await productManager.getProducts();
-    if (!products)
-      return res
-        .status(404)
-        .json({ status: "error", msg: "producto no encontrado" });
+const router= Router();
 
-   // Si hay un limit, limitamos la cantidad de productos devueltos
-   //si hay algun limite query me va a devolver la cantidad que pase por la url. comienza desde el 0(primer producto) hasta
-   //el q marque el cliente. xj: /products?limit=5 me traera los primeros 5 prod del array.
-   const limitedProducts = limit ? products.slice(0, Number(limit)) : products;
-    
-   res.status(200).json({ status: "ok", products: limitedProducts });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ status: "error", msg: "error interno del sevidor" });
+//me muestra todos los productos del array
+router.get("/", async (req, res) => {
+try {
+const {limit,page,sort,category,status}=req.query;
+
+const options={
+  limit:limit ||10,
+  page: page||1,
+  sort:{
+    price: sort === "asc"? 1: -1
   }
+}
+
+  const products = await productsDao.getAll({}, options);
+
+  res.status(200).json({ status: "ok", products });
+} catch (error) {
+  console.log(error);
+  res.status(500).json({ status: "error", msg: "Error interno del servidor" }); 
+}
 });
 
 //me muestra depende el id
-router.get("/products/:pid", async (req, res) => {
+router.get("/:pid", async (req, res) => {
   try {
     const { pid } = req.params;
-    const product = await productManager.getProductById(pid);
-    if (!product)
-      return res
-        .status(404)
-        .json({ status: "error", msg: "producto no encontrado" });
+    const product = await productsDao.getById(pid);
+    if (!product) return res.status(404).json({ status: "error", msg: "Producto no encontrado" });
+
     res.status(200).json({ status: "ok", product });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ status: "error", msg: "error interno del sevidor" });
+    res.status(500).json({ status: "error", msg: "Error interno del servidor" });
   }
 });
 
 //actualizando
-router.put("/products/:pid", async (req, res) => {
+router.put("/:pid", async (req, res) => {
   try {
     const { pid } = req.params;
 
     //le pasamos un req.body porque es un objeto y lo que venga del body, me lo actualice
     const body= req.body;
-    const product = await productManager.upDateProduct(pid, body);
+    const product = await productsDao.upDateProduct(pid,body);
     res.status(200).json({ status: "ok", product });
   } catch (error) {
     console.log(error);
@@ -58,11 +57,11 @@ router.put("/products/:pid", async (req, res) => {
 });
 
 //agregando producto
-router.post("/products", checkProductData, async (req, res) => {
+router.post("/", checkProductData, async (req, res) => {
   try {
     const body = req.body;
     //ahora agregamos el producto que queremos subir desde el enpoint
-    const product = await productManager.addProduct(body);
+    const product = await productsDao.createProduct(body);
     res.status(201).json({ status: "agregado", product });
   } catch (error) {
     console.log(error);
@@ -70,17 +69,17 @@ router.post("/products", checkProductData, async (req, res) => {
   }
 });
 
-router.delete("/products/:pid", async (req, res) => {
+
+router.delete("/:pid", async (req, res) => {
   try {
     const { pid } = req.params;
-    const product = await productManager.getProductById(pid);
-
+    const product = await productsDao.deleteProduct(pid);
+    await productsDao.deleteProduct(pid);
     if (!product)
       return res
         .status(404)
         .json({ status: "error", msg: "Producto no encontrado" });
-        
-    await productManager.deleteProduct(pid);
+      
 
     res
       .status(200)

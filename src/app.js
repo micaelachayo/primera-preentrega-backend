@@ -3,13 +3,15 @@ import handlebars from 'express-handlebars';
 import __dirname from "./dirname.js";
 import viewRoutes from "./routes/view.routes.js";
 import {Server} from "socket.io";
-import productsRouter from "./routes/products.routes.js";
-import cartRouter from "./routes/cart.routes.js";
+import router from "./routes/index.routes.js";
+import { connectMongoDB } from "./config/mongodb.config.js";
+import envs from "./config/envs.config.js";
+
 
 const PORT = 8080;
 
 const app = express();
-
+connectMongoDB();
 
 app.engine("handlebars", handlebars.engine()); // Inicia el motor del la plantilla
 app.set("views", __dirname + "/views"); // Indicamos que ruta se encuentras las vistas
@@ -21,11 +23,10 @@ app.use(express.static("public"));
 
 
 app.use("/", viewRoutes);
-app.use ("/api", productsRouter);
-app.use ("/api", cartRouter);
+app.use ("/api", router);
 
-const httpServer= app.listen(PORT, () => {
-  console.log(`servidor escuchando en el puerto ${PORT}`);
+const httpServer= app.listen(envs.PORT, () => {
+  console.log(`servidor escuchando en el puerto ${envs.PORT}`);
 });
 
 //configuro socket

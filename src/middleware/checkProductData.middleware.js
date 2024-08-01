@@ -1,10 +1,9 @@
-import productManager from "../productManager.js";
+import productsDao from "../dao/products.dao.js";
 
 export const checkProductData = async (req, res, next) => {
   try {
     const body = req.body;
-    const { title, description, price, code, stock, category } =
-      body;
+    const { title, description, price, code, stock, category } =body;
     const newProduct = {
       title,
       description,
@@ -17,8 +16,8 @@ export const checkProductData = async (req, res, next) => {
     if (Object.values(newProduct).includes(undefined)) {
       return res.status(400).json({ status: "error", msg: "Todos los campos son obligatorios" });
     }
+    const products = await productsDao.getAll();
     // Verificar que el código sea único
-    const products = await productManager.getProducts();
     const codeExists = products.some((p) => p.code === code);
     if (codeExists) {
       return res
