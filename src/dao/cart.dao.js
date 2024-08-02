@@ -50,8 +50,8 @@ const UpdateQuantity = async (cid, pid, quantity) => {
 //Eliminar el producto del carrito
 const deleteProduct= async(cid, pid)=>{
 const cart= await cartmodel.findById(cid);
-const product = cart.products.filter(prod=>prod.product.toString()=== pid);
-const cartResponse= await productModel.findByIdAndUpdate(cid, {$set:{products: product}}, {new: true});
+const product = cart.products.filter(prod=>prod.product._id.toString()=== pid);
+const cartResponse= await cartmodel.findByIdAndUpdate(cid, {$set:{products: product}}, {new: true});
 return  cartResponse;
 }
 
