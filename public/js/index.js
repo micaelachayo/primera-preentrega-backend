@@ -1,4 +1,3 @@
-
 //ACA VA TODO LO que necesita escuhar o enviar el front y trae el DOM
 const socket= io();
 
