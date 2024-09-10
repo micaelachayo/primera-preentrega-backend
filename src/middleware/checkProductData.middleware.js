@@ -16,7 +16,9 @@ export const checkProductData = async (req, res, next) => {
     if (Object.values(newProduct).includes(undefined)) {
       return res.status(400).json({ status: "error", msg: "Todos los campos son obligatorios" });
     }
-    const products = await productsDao.getAll();
+    const response = await productsDao.getAll();
+    const products = response.products || []; // Asumiendo que 'products' es la clave donde está el array
+    
     // Verificar que el código sea único
     const codeExists = products.some((p) => p.code === code);
     if (codeExists) {

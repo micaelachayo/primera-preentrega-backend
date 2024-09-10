@@ -1,7 +1,7 @@
 import { Router } from "express";
 import productsDao from "../dao/products.dao.js";
 import { checkProductData } from "../middleware/checkProductData.middleware.js";
-
+import { io } from "../app.js";
 
 const router= Router();
 
@@ -19,8 +19,8 @@ const options={
 }
 
   const products = await productsDao.getAll({}, options);
-
-  res.status(200).json({ status: "ok", products });
+res.setHeader('content-type', 'application/json');
+  return res.status(200).json({ status: "ok", products });
 } catch (error) {
   console.log(error);
   res.status(500).json({ status: "error", msg: "Error interno del servidor" }); 
@@ -62,6 +62,9 @@ router.post("/", checkProductData, async (req, res) => {
     const body = req.body;
     //ahora agregamos el producto que queremos subir desde el enpoint
     const product = await productsDao.createProduct(body);
+    // Emitir el producto recién agregado a todos los clientes
+    io.emit("products", product);
+
     res.status(201).json({ status: "agregado", product });
   } catch (error) {
     console.log(error);
